@@ -134,4 +134,4 @@ React Bits occasionally draws inspiration from publicly available code examples.
 
 ## 📄 License
 
-[MIT + Commons Clause](https://github.com/davidhdev/react-bits/blob/main/LICENSE.md) — free for personal and commercial use.
+[MIT + Commons Clause](https://github.com/davidhdev/react-bits/blob/main/LICENSE.md) — commercial use in an app, website, or product is allowed; selling, sublicensing, or redistributing the components themselves is not.
