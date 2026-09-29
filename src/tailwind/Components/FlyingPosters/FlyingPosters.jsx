@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect } from 'react';
 import { Renderer, Camera, Transform, Plane, Program, Mesh, Texture } from 'ogl';
 
@@ -427,7 +429,7 @@ export default function FlyingPosters({
   planeWidth = 320,
   planeHeight = 320,
   distortion = 3,
-  scrollEase = 0.1,
+  scrollEase = 0.01,
   cameraFov = 45,
   cameraZ = 20,
   className,

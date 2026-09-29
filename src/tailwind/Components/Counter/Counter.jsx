@@ -1,3 +1,5 @@
+'use client';
+
 import { motion, useSpring, useTransform } from 'motion/react';
 import { useEffect } from 'react';
 
@@ -87,8 +89,8 @@ export default function Counter({
   gap = 8,
   borderRadius = 4,
   horizontalPadding = 8,
-  textColor = 'white',
-  fontWeight = 'bold',
+  textColor = 'inherit',
+  fontWeight = 'inherit',
   containerStyle,
   counterStyle,
   digitStyle,

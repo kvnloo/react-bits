@@ -29,10 +29,12 @@ import {
 // import { ArrowRightIcon } from 'lucide-react';
 // import Aurora from '../../content/Backgrounds/Aurora/Aurora';
 import { colors } from '../../constants/colors';
-import { NEW } from '../../constants/Categories';
+import { CATEGORIES, NEW_KEYS } from '../../constants/Categories';
 import usePreviewMediaAllowed from '../../hooks/usePreviewMediaAllowed';
 
 const CARD_RADIUS = 16;
+const SORT_NAME = 'A to Z';
+const SORT_NEWEST = 'Newest';
 const EMPTY_SET = new Set();
 
 const FAV_BTN_STYLE = {
@@ -74,10 +76,90 @@ const PILL_BTN_STYLE = {
   _active: { transform: 'scale(0.97)' }
 };
 
+const ToolbarSelect = ({ collection, value, onChange, name, width, disabled, ...rootProps }) => (
+  <Select.Root
+    {...rootProps}
+    collection={collection}
+    value={[value]}
+    onValueChange={({ value: next }) => onChange(next[0])}
+    size="sm"
+    width={{ base: '100%', md: width }}
+    disabled={disabled}
+  >
+    <Select.HiddenSelect name={name} />
+    <Select.Control>
+      <Select.Trigger
+        fontSize="13px"
+        bg="var(--action-control-bg)"
+        border="1px solid var(--action-control-border)"
+        backdropFilter="var(--surface-ghost-blur)"
+        rounded="10px"
+        h="36px"
+        fontWeight={500}
+        cursor={disabled ? 'default' : 'pointer'}
+        transition="background 0.2s ease, border-color 0.2s ease"
+        _hover={
+          disabled
+            ? undefined
+            : {
+                background: 'var(--action-control-hover)',
+                borderColor: 'var(--action-control-selected-border)'
+              }
+        }
+        css={{
+          '&[data-state="open"]': {
+            background: 'var(--action-control-selected)',
+            borderColor: 'var(--action-control-selected-border)',
+            boxShadow: 'var(--action-control-shadow)'
+          }
+        }}
+        w="full"
+      >
+        <Select.ValueText color={disabled ? 'var(--text-dimmed)' : 'var(--text-primary)'} pl={2}>
+          {value}
+        </Select.ValueText>
+        <Select.IndicatorGroup>
+          <Select.Indicator />
+        </Select.IndicatorGroup>
+      </Select.Trigger>
+    </Select.Control>
+    <Portal>
+      <Select.Positioner>
+        <Select.Content
+          bg="var(--shell-panel)"
+          backdropFilter="blur(32px) saturate(1.3)"
+          border="1px solid var(--shell-border-strong)"
+          borderRadius="12px"
+          w={{ base: '100%', md: width }}
+          px={1.5}
+          py={1.5}
+          boxShadow="var(--shadow-menu)"
+        >
+          {collection.items.map(option => (
+            <Select.Item
+              key={option}
+              item={option}
+              borderRadius="8px"
+              px={3}
+              py={2}
+              fontSize="13px"
+              cursor="pointer"
+              _highlighted={{ bg: 'var(--surface-ghost)' }}
+            >
+              {option}
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Positioner>
+    </Portal>
+  </Select.Root>
+);
+
 const slug = str => (str || '').replace(/\s+/g, '-').toLowerCase();
 const fromPascal = str =>
   (str || '')
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
     .replace(/_/g, ' ')
     .trim();
 
@@ -87,11 +169,15 @@ const ComponentList = ({
   hasFavoriteButton = false,
   sorting = 'none',
   title,
-  newSinceLastVisit = EMPTY_SET
+  newSinceLastVisit = EMPTY_SET,
+  basePath = '',
+  showCategoryFilter = true,
+  showSortControl = false
 }) => {
   const scrollRef = useRef(null);
   const GAP_PX = 16;
   const [hoveredKey, setHoveredKey] = useState(null);
+  const [sortMode, setSortMode] = useState(sorting === 'alphabetical' ? SORT_NAME : null);
   const previewMediaAllowed = usePreviewMediaAllowed();
   const clearSlotRef = useRef(null);
   const clearBtnRef = useRef(null);
@@ -134,7 +220,8 @@ const ComponentList = ({
         videoUrl: meta?.videoUrl ?? '',
         tags: Array.isArray(meta?.tags) ? meta.tags : [],
         docsUrl: meta?.docsUrl,
-        isNew: NEW.includes(title),
+        isNew: NEW_KEYS.has(fullKey),
+        added: meta?.added ?? '',
         isNewSinceLastVisit: newSinceLastVisit.has(fullKey)
       };
     };
@@ -146,24 +233,29 @@ const ComponentList = ({
       })
       .map(mapToItem);
 
-    if (sorting === 'alphabetical') {
+    if (sortMode === SORT_NEWEST) {
+      arr = arr.sort((a, b) => b.added.localeCompare(a.added) || a.title.localeCompare(b.title));
+    } else if (sortMode === SORT_NAME) {
       arr = arr.sort((a, b) => {
         if (a.isNewSinceLastVisit !== b.isNewSinceLastVisit) return a.isNewSinceLastVisit ? -1 : 1;
-        const aNew = NEW.includes(a.title);
-        const bNew = NEW.includes(b.title);
-        if (aNew !== bNew) return aNew ? -1 : 1;
+        if (a.isNew !== b.isNew) return a.isNew ? -1 : 1;
         return a.title.localeCompare(b.title);
       });
     }
     return arr;
-  }, [list, newSinceLastVisit, sorting]);
+  }, [list, newSinceLastVisit, sortMode]);
 
-  const categoriesList = useMemo(() => {
-    const set = new Set();
-    items.forEach(i => i.categoryLabel && set.add(i.categoryLabel));
-    return ['All Components', ...Array.from(set).sort((a, b) => a.localeCompare(b))];
-  }, [items]);
+  const categoriesList = useMemo(
+    () => [
+      'All Components',
+      ...CATEGORIES.filter(c => c.name !== 'Get Started')
+        .map(c => c.name)
+        .sort((a, b) => a.localeCompare(b))
+    ],
+    []
+  );
   const categories = useMemo(() => createListCollection({ items: categoriesList }), [categoriesList]);
+  const sortOptions = useMemo(() => createListCollection({ items: [SORT_NAME, SORT_NEWEST] }), []);
 
   const [selectedCategory, setSelectedCategory] = useState(categories.items[0]);
   const [search, setSearch] = useState('');
@@ -189,16 +281,16 @@ const ComponentList = ({
 
   const filtered = useMemo(() => {
     const term = search.trim();
-    const all = selectedCategory === 'All Components';
+    const all = !showCategoryFilter || selectedCategory === 'All Components';
     return items
       .filter(item => (all || item.categoryLabel === selectedCategory) && (!newOnly || item.isNewSinceLastVisit))
       .map(item => ({ item, match: term ? rankComponentSearch(item, term) : { score: 1 } }))
       .filter(({ match }) => Boolean(match))
       .sort((a, b) => (term ? b.match.score - a.match.score : 0))
       .map(({ item }) => item);
-  }, [items, newOnly, selectedCategory, search]);
+  }, [items, newOnly, selectedCategory, search, showCategoryFilter]);
   const controlsDisabled = items.length === 0;
-  const hasCategoryFilter = selectedCategory !== categories.items[0];
+  const hasCategoryFilter = showCategoryFilter && selectedCategory !== categories.items[0];
   const newSinceLastVisitCount = useMemo(() => items.filter(item => item.isNewSinceLastVisit).length, [items]);
   const hasActiveFilters = hasCategoryFilter || newOnly || search.trim().length > 0;
 
@@ -386,81 +478,28 @@ const ComponentList = ({
             />
           </InputGroup>
 
-          <Select.Root
-            collection={categories}
-            value={[selectedCategory]}
-            onValueChange={({ value }) => setSelectedCategory(value[0])}
-            size="sm"
-            width={{ base: '100%', md: '180px' }}
-            disabled={controlsDisabled}
-          >
-            <Select.HiddenSelect name="component-list-category-filter" />
-            <Select.Control>
-              <Select.Trigger
-                fontSize="13px"
-                bg="var(--action-control-bg)"
-                border="1px solid var(--action-control-border)"
-                backdropFilter="var(--surface-ghost-blur)"
-                rounded="10px"
-                h="36px"
-                fontWeight={500}
-                cursor={controlsDisabled ? 'default' : 'pointer'}
-                transition="background 0.2s ease, border-color 0.2s ease"
-                _hover={
-                  controlsDisabled
-                    ? undefined
-                    : {
-                        background: 'var(--action-control-hover)',
-                        borderColor: 'var(--action-control-selected-border)'
-                      }
-                }
-                css={{
-                  '&[data-state="open"]': {
-                    background: 'var(--action-control-selected)',
-                    borderColor: 'var(--action-control-selected-border)',
-                    boxShadow: 'var(--action-control-shadow)'
-                  }
-                }}
-                w="full"
-              >
-                <Select.ValueText color={controlsDisabled ? 'var(--text-dimmed)' : 'var(--text-primary)'} pl={2}>
-                  {selectedCategory}
-                </Select.ValueText>
-                <Select.IndicatorGroup>
-                  <Select.Indicator />
-                </Select.IndicatorGroup>
-              </Select.Trigger>
-            </Select.Control>
-            <Portal>
-              <Select.Positioner>
-                <Select.Content
-                  bg="var(--shell-panel)"
-                  backdropFilter="blur(32px) saturate(1.3)"
-                  border="1px solid var(--shell-border-strong)"
-                  borderRadius="12px"
-                  w={{ base: '100%', md: '180px' }}
-                  px={1.5}
-                  py={1.5}
-                  boxShadow="var(--shadow-menu)"
-                >
-                  {categories.items.map(cat => (
-                    <Select.Item
-                      key={cat}
-                      item={cat}
-                      borderRadius="8px"
-                      px={3}
-                      py={2}
-                      fontSize="13px"
-                      cursor="pointer"
-                      _highlighted={{ bg: 'var(--surface-ghost)' }}
-                    >
-                      {cat}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Positioner>
-            </Portal>
-          </Select.Root>
+          {showCategoryFilter ? (
+            <ToolbarSelect
+              collection={categories}
+              value={selectedCategory}
+              onChange={setSelectedCategory}
+              name="component-list-category-filter"
+              width="180px"
+              disabled={controlsDisabled}
+            />
+          ) : null}
+
+          {showSortControl ? (
+            <ToolbarSelect
+              collection={sortOptions}
+              value={sortMode}
+              onChange={setSortMode}
+              name="component-list-sort"
+              width="130px"
+              disabled={controlsDisabled}
+              ml={{ base: 0, md: 2 }}
+            />
+          ) : null}
 
           <Box
             ref={clearSlotRef}
@@ -549,7 +588,7 @@ const ComponentList = ({
                           return <div key={key} style={style} />;
                         }
                         const item = filtered[index];
-                        const to = `/${slug(fromPascal(item.categoryKey))}/${slug(fromPascal(item.componentKey))}`;
+                        const to = `${basePath}/${slug(fromPascal(item.categoryKey))}/${slug(fromPascal(item.componentKey))}`;
                         const isSaved = savedSet.has(item.key) || isComponentSaved(item.key);
                         const isLastCol = columnIndex === columnCount - 1;
 

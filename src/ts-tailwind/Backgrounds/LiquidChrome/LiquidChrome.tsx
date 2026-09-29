@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useRef, useEffect } from 'react';
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
 
@@ -13,9 +15,9 @@ interface LiquidChromeProps extends React.HTMLAttributes<HTMLDivElement> {
 export const LiquidChrome: React.FC<LiquidChromeProps> = ({
   baseColor = [0.1, 0.1, 0.1],
   speed = 0.2,
-  amplitude = 0.5,
+  amplitude = 0.3,
   frequencyX = 3,
-  frequencyY = 2,
+  frequencyY = 3,
   interactive = true,
   ...props
 }) => {

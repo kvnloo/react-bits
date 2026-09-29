@@ -1,3 +1,5 @@
+'use client';
+
 // Component ported and enhanced from https://codepen.io/JuanFuentes/pen/eYEeoyE
 
 import { useEffect, useRef } from 'react';
@@ -607,6 +609,11 @@ export default function ASCIIText({
           -webkit-background-clip: text;
           z-index: 9;
           mix-blend-mode: difference;
+        }
+
+        /* Invert colors after rendering the effect if in light mode */
+        :root[data-theme='light'] .ascii-text-container {
+          filter: invert(1);
         }
       `}</style>
     </div>

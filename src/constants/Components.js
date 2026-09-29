@@ -1,7 +1,8 @@
 const getStarted = {
   introduction: () => import('../docs/Introduction.jsx'),
   installation: () => import('../docs/Installation.jsx'),
-  mcp: () => import('../docs/McpServer.jsx')
+  mcp: () => import('../docs/McpServer.jsx'),
+  changelog: () => import('../docs/Changelog.jsx')
 };
 
 const animations = {
@@ -43,6 +44,8 @@ const animations = {
   'strands': () => import('../demo/Animations/StrandsDemo'),
   'cursor-grid': () => import('../demo/Animations/CursorGridDemo'),
   'glow-cursor': () => import('../demo/Animations/GlowCursorDemo'),
+  'dither-veil': () => import('../demo/Animations/DitherVeilDemo'),
+  'electric-logo': () => import('../demo/Animations/ElectricLogoDemo'),
 };
 
 const textAnimations = {
@@ -77,7 +80,8 @@ const textAnimations = {
   'depth-text': () => import('../demo/TextAnimations/DepthTextDemo'),
   'fold-text': () => import('../demo/TextAnimations/FoldTextDemo'),
   'echo-text': () => import('../demo/TextAnimations/EchoTextDemo'),
-  'text-loop': () => import('../demo/TextAnimations/TextLoopDemo')
+  'text-loop': () => import('../demo/TextAnimations/TextLoopDemo'),
+  'tech-text': () => import('../demo/TextAnimations/TechTextDemo')
 };
 
 const components = {
@@ -95,6 +99,7 @@ const components = {
   'flying-posters': () => import('../demo/Components/FlyingPostersDemo'),
   'flowing-menu': () => import('../demo/Components/FlowingMenuDemo'),
   'depth-carousel': () => import('../demo/Components/DepthCarouselDemo'),
+  'flex-carousel': () => import('../demo/Components/FlexCarouselDemo'),
   'accordion-gallery': () => import('../demo/Components/AccordionGalleryDemo'),
   'morph-slider': () => import('../demo/Components/MorphSliderDemo'),
   'drift-wall': () => import('../demo/Components/DriftWallDemo'),
@@ -128,7 +133,46 @@ const components = {
   'specular-button': () => import('../demo/Components/SpecularButtonDemo')
 };
 
+const micro = {
+  'squish-switch': () => import('../demo/Micro/SquishSwitchDemo'),
+  'hold-button': () => import('../demo/Micro/HoldButtonDemo'),
+  'peek-rating': () => import('../demo/Micro/PeekRatingDemo'),
+  'spring-check': () => import('../demo/Micro/SpringCheckDemo'),
+  'pulse-heart': () => import('../demo/Micro/PulseHeartDemo'),
+  'rubber-segment': () => import('../demo/Micro/RubberSegmentDemo'),
+  'slide-commit': () => import('../demo/Micro/SlideCommitDemo'),
+  'warm-tooltip': () => import('../demo/Micro/WarmTooltipDemo'),
+  'fuse-button': () => import('../demo/Micro/FuseButtonDemo'),
+  'scrub-field': () => import('../demo/Micro/ScrubFieldDemo'),
+  'lattice-loader': () => import('../demo/Micro/LatticeLoaderDemo'),
+  'dodge-field': () => import('../demo/Micro/DodgeFieldDemo'),
+  'code-slots': () => import('../demo/Micro/CodeSlotsDemo'),
+  'wake-slider': () => import('../demo/Micro/WakeSliderDemo'),
+  'comet-dial': () => import('../demo/Micro/CometDialDemo'),
+  'jelly-radio': () => import('../demo/Micro/JellyRadioDemo'),
+  'swipe-row': () => import('../demo/Micro/SwipeRowDemo'),
+  'glide-select': () => import('../demo/Micro/GlideSelectDemo'),
+  'status-mark': () => import('../demo/Micro/StatusMarkDemo'),
+  'call-chip': () => import('../demo/Micro/CallChipDemo'),
+  'bell-toggle': () => import('../demo/Micro/BellToggleDemo'),
+  'sling-button': () => import('../demo/Micro/SlingButtonDemo'),
+  'swipe-toast': () => import('../demo/Micro/SwipeToastDemo'),
+  'prompt-bar': () => import('../demo/Micro/PromptBarDemo'),
+  'slosh-gauge': () => import('../demo/Micro/SloshGaugeDemo'),
+  'voice-pill': () => import('../demo/Micro/VoicePillDemo'),
+  'thought-line': () => import('../demo/Micro/ThoughtLineDemo'),
+  'refine-frame': () => import('../demo/Micro/RefineFrameDemo'),
+  'folder-float': () => import('../demo/Micro/FolderFloatDemo'),
+  'branched-menu': () => import('../demo/Micro/BranchedMenuDemo'),
+  'flip-card': () => import('../demo/Micro/FlipCardDemo'),
+  'tear-ticket': () => import('../demo/Micro/TearTicketDemo'),
+  'paper-crumple': () => import('../demo/Micro/PaperCrumpleDemo'),
+  shredder: () => import('../demo/Micro/ShredderDemo')
+};
+
 const backgrounds = {
+  'micro-slats': () => import('../demo/Backgrounds/MicroSlatsDemo.jsx'),
+  'shape-waves': () => import('../demo/Backgrounds/ShapeWavesDemo.jsx'),
   'aero-shards': () => import('../demo/Backgrounds/AeroShardsDemo.jsx'),
   'ghost-fibers': () => import('../demo/Backgrounds/GhostFibersDemo.jsx'),
   'silk': () => import('../demo/Backgrounds/SilkDemo'),
@@ -192,5 +236,6 @@ export const componentMap = {
   ...animations,
   ...textAnimations,
   ...components,
+  ...micro,
   ...backgrounds
 };

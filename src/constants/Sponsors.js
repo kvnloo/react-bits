@@ -16,6 +16,18 @@ export const silverSponsors = [
     name: 'Shadcncraft',
     imageUrl: '/assets/sponsors/shadcncraft.svg',
     url: 'https://shadcncraft.com/'
+  },
+  {
+    id: 2,
+    name: 'shadcnuikit.com',
+    imageUrl: '/assets/sponsors/shadcnuikit.svg',
+    url: 'https://shadcnuikit.com/'
+  },
+  {
+    id: 3,
+    name: 'Shadcn Studio',
+    imageUrl: '/assets/sponsors/shadcnstudio.svg',
+    url: 'https://shadcnstudio.com/'
   }
 ];
 

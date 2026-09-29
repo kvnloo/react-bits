@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 import { Renderer, Program, Mesh, Triangle, Transform, Vec3, Camera } from 'ogl';
 
@@ -106,7 +108,7 @@ const MetaBalls = ({
   clumpFactor = 1,
   cursorBallSize = 3,
   cursorBallColor = '#ffffff',
-  enableTransparency = true
+  enableTransparency = false
 }) => {
   const containerRef = useRef(null);
 

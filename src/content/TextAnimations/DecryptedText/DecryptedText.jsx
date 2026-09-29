@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { motion } from 'motion/react';
 
@@ -14,7 +16,8 @@ const styles = {
     margin: '-1px',
     overflow: 'hidden',
     clip: 'rect(0,0,0,0)',
-    border: 0
+    border: 0,
+    visibility: 'hidden'
   }
 };
 

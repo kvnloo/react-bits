@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect, useState } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
 
@@ -42,7 +44,7 @@ const SideRays = ({
   tilt = 0,
   saturation = 1.5,
   blend = 0.75,
-  falloff = 2.0,
+  falloff = 1.6,
   opacity = 1.0,
   className = ''
 }: SideRaysProps) => {
